@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PlusIcon } from "lucide-react";
+import { CheckCircleIcon, PlusIcon, UnplugIcon } from "lucide-react";
 import { PLATFORMS } from "../assets/assets";
 
 
@@ -59,7 +59,9 @@ const Accounts = ({accounts,onDisconnect}) => {
 </>)
     }
   </div>
-
+<button>
+  <UnplugIcon/>
+</button>
   </div>;
 
 };
