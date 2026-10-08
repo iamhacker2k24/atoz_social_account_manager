@@ -39,7 +39,7 @@ const Accounts = () => {
 
   // Disconnect account
   const handleDisconnect = async (accountId) => {
-    setAccounts((prev) => prev.filter((account) => account.id !== accountId));
+    setAccounts((prev) => prev.filter((account) => account._id !== accountId));
   };
 
   // Get connected platform IDs

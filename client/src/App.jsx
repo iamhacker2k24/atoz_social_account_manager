@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Accounts from "./pages/Accounts";
 import Schuduler from "./pages/Schuduler";
 import Layout from "./pages/Layout";
+import AIComposer from "./pages/AIComposer";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/schedule" element={<Schuduler />} />
+          <Route path="/ai-composer" element={<AIComposer />} />
         </Route>
       </Routes>
     </>
