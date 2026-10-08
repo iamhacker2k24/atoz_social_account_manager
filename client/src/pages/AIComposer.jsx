@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
@@ -12,9 +12,7 @@ import {
 import { dummyGenerationData, PLATFORMS } from "../assets/assets";
 
 const AIComposer = () => {
-  // =========================================================
   // AI COMPOSER STATE
-  // =========================================================
 
   const [prompt, setPrompt] = useState("");
   const [tone, setTone] = useState("Professional");
@@ -23,9 +21,7 @@ const AIComposer = () => {
 
   const [generations, setGenerations] = useState([]);
 
-  // =========================================================
   // SCHEDULER STATE
-  // =========================================================
 
   const [activeScheduler, setActiveScheduler] = useState(null);
 
@@ -36,15 +32,11 @@ const AIComposer = () => {
 
   const [scheduling, setScheduling] = useState(false);
 
-  // =========================================================
   // TONES
-  // =========================================================
 
   const tones = ["Professional", "Creative", "Funny", "Minimalist", "Excited"];
 
-  // =========================================================
   // FETCH GENERATIONS
-  // =========================================================
 
   const fetchGenerations = async () => {
     // Later replace with API call
@@ -55,9 +47,7 @@ const AIComposer = () => {
     fetchGenerations();
   }, []);
 
-  // =========================================================
   // GENERATE AI POST
-  // =========================================================
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -91,9 +81,7 @@ const AIComposer = () => {
     }
   };
 
-  // =========================================================
   // OPEN SCHEDULER
-  // =========================================================
 
   const openScheduler = (generation) => {
     setActiveScheduler(generation);
@@ -104,9 +92,7 @@ const AIComposer = () => {
     setScheduledTime("");
   };
 
-  // =========================================================
   // CLOSE SCHEDULER
-  // =========================================================
 
   const closeScheduler = () => {
     if (scheduling) return;
@@ -117,9 +103,7 @@ const AIComposer = () => {
     setScheduledTime("");
   };
 
-  // =========================================================
   // TOGGLE PLATFORM
-  // =========================================================
 
   const togglePlatform = (platformId) => {
     setSelectedPlatforms((prev) =>
@@ -129,9 +113,7 @@ const AIComposer = () => {
     );
   };
 
-  // =========================================================
   // SCHEDULE POST
-  // =========================================================
 
   const handleSchedule = async () => {
     if (!activeScheduler) return;
@@ -154,9 +136,8 @@ const AIComposer = () => {
     setScheduling(true);
 
     try {
-      // ------------------------------------------------
       // Later connect this to your backend
-      // ------------------------------------------------
+
       // await axios.post("/api/posts/schedule", {
       //   generationId: activeScheduler._id,
       //   platforms: selectedPlatforms,
@@ -180,15 +161,11 @@ const AIComposer = () => {
     }
   };
 
-  // =========================================================
   // RETURN
-  // =========================================================
 
   return (
     <div className="space-y-8">
-      {/* =====================================================
-          AI COMPOSER
-      ===================================================== */}
+      {/* AI COMPOSER*/}
 
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
         {/* Heading */}
@@ -289,9 +266,7 @@ const AIComposer = () => {
         </div>
       </div>
 
-      {/* =====================================================
-          AI GENERATED POSTS
-      ===================================================== */}
+      {/* AI GENERATED POSTS*/}
 
       <div className="bg-white rounded-2xl border border-slate-200 p-6">
         {/* Header */}
@@ -387,9 +362,7 @@ const AIComposer = () => {
         )}
       </div>
 
-      {/* =====================================================
-          SCHEDULER MODAL
-      ===================================================== */}
+      {/* SCHEDULER MODAL*/}
 
       {activeScheduler && (
         <div className="fixed inset-0 min-h-screen z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">

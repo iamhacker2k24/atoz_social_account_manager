@@ -114,9 +114,7 @@ const Schuduler = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-full">
-      {/* =====================================================
-          COMPOSE PANEL
-      ===================================================== */}
+      {/* COMPOSE PANEL*/}
 
       <div className="w-full lg:w-[460px] shrink-0">
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -315,9 +313,7 @@ const Schuduler = () => {
         </div>
       </div>
 
-      {/* =====================================================
-          QUEUE PANELS
-      ===================================================== */}
+      {/* QUEUE PANELS*/}
 
       <div className="flex-1 flex flex-col gap-6 min-w-0">
         {/* =================================================
