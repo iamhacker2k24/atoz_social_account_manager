@@ -2,12 +2,12 @@
 //Post /api/auth/register 
 
 const jwt = require("jsonwebtoken")
-const bcrypt = requie("bcrypt")
+const bcrypt = require("bcrypt")
 const User = require("../model/User");
-const salt = process.env.SALT
+const salt = process.env.JWT_SECRET
 console.log(salt)
 const generateToken = (id) => {
-    return jwt.sign(id, salt)
+    return jwt.sign(id, salt, { expiresIn: "30d" })
 }
 
 const register = async (req, res) => {
@@ -26,7 +26,7 @@ const register = async (req, res) => {
         user.save();
         if (user) {
             res.status(400).json({
-                _id: user._id, name: user.name, email: user.email
+                _id: user._id, name: user.name, email: user.email, token: generateToken(user._id.toString())
             })
         }
         else {
@@ -47,6 +47,36 @@ const register = async (req, res) => {
 }
 
 
+//login user 
+//POST /api/auth/login
 
 
-module.exports = { register }
+
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = User.findOne({ email });
+        if (user && (await bcrypt.compare(password, user.password))) {
+            res.status(400).json({
+                _id: user._id, name: user.name, email: user.email, token: generateToken(user._id.toString())
+            })
+            return;
+        }
+        else {
+            res.status(401).json({
+                "msg": "invaild email or password "
+            })
+        }
+
+
+
+    } catch (error) {
+        res.status(500).json({
+            msg: error.message || "Inavaid  from login"
+        })
+
+    }
+
+}
+
+module.exports = { register, login }
