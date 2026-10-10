@@ -4,6 +4,8 @@ const dbConnection = require("./config/db");
 const authRouter = require("./routes/authRouts");
 const socialAuthRouter = require("./routes/socialAuthRoutes");
 const accountRouter = require("./routes/accountRoutes");
+const postRouter = require("./routes/postRoutes");
+const activityRouter = require("./routes/activityRoutes");
 
 require('dotenv').config()
 const app = express();
@@ -21,6 +23,8 @@ app.get("/", (req, res) => {
 app.use("/api", authRouter)
 app.use("/api/oauth", socialAuthRouter)
 app.use("/api/accounts", accountRouter)
+app.use("/api/posts", postRouter)
+app.use("/api/activity",activityRouter)
 app.listen(PORT, async () => {
     await dbConnection()
     console.log("server started ")

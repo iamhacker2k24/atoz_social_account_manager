@@ -108,7 +108,17 @@ const getposts = async (req, res) => {
 //post /api/posts= 
 const schedulePost = async (req, res) => {
     try {
+        const { content, platfroms, scheduledFor, status } = req.body;
+        //parse platfrom if id some as a stringified arry from From data
+        let parsedPlatfroms = platfroms;
+        if (typeof platfroms === "string") {
+            try {
+                parsedPlatfroms = JSON.parse(platfroms);
 
+            } catch (error) {
+                parsedPlatfroms = platfroms.split(",")
+            }
+        }
     } catch (error) {
         res.status(500).json({
             msg: error?.message || "Server error "
