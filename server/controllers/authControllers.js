@@ -1,20 +1,26 @@
 //Register user 
 //Post /api/auth/register 
 
+require('dotenv').config()
 const jwt = require("jsonwebtoken")
+require('dotenv').config()
 const bcrypt = require("bcrypt")
 const User = require("../model/User");
 const salt = process.env.JWT_SECRET
 console.log(salt)
 const generateToken = (id) => {
-    return jwt.sign(id, salt, { expiresIn: "30d" })
+    return jwt.sign({ id: id }, salt, { expiresIn: "30d" })
 }
 
+
+// postman check done 
 const register = async (req, res) => {
+    console.log(req.body)
     try {
         const { name, email, password } = req.body;
         const userExits = User.findOne({ email });
-        if (userExits) {
+        // console.log(userExits.data)
+        if (!userExits) {
             res.status(400).json({
                 msg: "User already exits "
             })
@@ -25,7 +31,7 @@ const register = async (req, res) => {
         const user = await User.create({ name, email, password: hashPass });
         user.save();
         if (user) {
-            res.status(400).json({
+            res.status(200).json({
                 _id: user._id, name: user.name, email: user.email, token: generateToken(user._id.toString())
             })
         }
@@ -51,11 +57,14 @@ const register = async (req, res) => {
 //POST /api/auth/login
 
 
+//postman  check done 
 
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = User.findOne({ email });
+        console.log(req.body)
+        const user = await User.findOne({ email });
+        console.log(user)
         if (user && (await bcrypt.compare(password, user.password))) {
             res.status(400).json({
                 _id: user._id, name: user.name, email: user.email, token: generateToken(user._id.toString())

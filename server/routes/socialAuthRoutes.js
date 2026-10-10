@@ -4,9 +4,11 @@ const socialAuthRouter = express.Router();
 
 
 
-socialAuthRouter.get("/:platfrom/url", generateAuthUrl)
-
 socialAuthRouter.get("/sync", syncAccounts)
 
+// check done by post man woring 
+// socialAuthRouter.get("/:platfrom", generateAuthUrl)
 
-module.exporst = socialAuthRouter;
+
+
+module.exports = socialAuthRouter;

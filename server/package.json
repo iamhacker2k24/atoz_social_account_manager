@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google/genai": "^2.28.0",
     "@zernio/node": "^0.2.1147",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
