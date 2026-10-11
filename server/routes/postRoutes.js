@@ -1,4 +1,4 @@
-const routes = require("express");
+const express = require("express");
 const protect = require("../middlewares/authMiddleWare");
 const { getposts, getGenerations, generatePost } = require("../controllers/postControllers");
 const upload = require("../config/multer");

@@ -62,9 +62,9 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(req.body)
+        // console.log(req.body)
         const user = await User.findOne({ email });
-        console.log(user)
+        // console.log(user)
         if (user && (await bcrypt.compare(password, user.password))) {
             res.status(400).json({
                 _id: user._id, name: user.name, email: user.email, token: generateToken(user._id.toString())
@@ -76,6 +76,7 @@ const login = async (req, res) => {
                 "msg": "invaild email or password "
             })
         }
+
 
 
 

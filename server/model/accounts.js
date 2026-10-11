@@ -14,22 +14,15 @@ const accountSchema = new Schema({
     zernioAccountId: {
         type: String
     },
-    accessToken: {
-        type: String
-    },
-    refreshToken: {
-        type: String
-    },
-    tokenExpiresAt: {
-        type: Date
-    },
     status: {
-        type: String, enum: ["connected", "disconnected "], default: "connected"
+        type: String, enum: ["true", "false "], default: "false"
     },
     avatarUrl: {
         type: String
+    },
+    lastSyncedAt: {
+        type: Date
     }
-
 
 }, {
     timestamps: true

@@ -6,27 +6,11 @@ const Account = require("../model/accounts")
 //get /api/accounts 
 const getAccounts = async (req, res) => {
     try {
-
         const accounts = await Account.find({ user: req.user._id });
         res.json(accounts)
     } catch (error) {
-
         res.status(500).json({
             msg: "Error from get accounts"
-        })
-    }
-
-}
-//add account 
-//POST /api/accounts 
-const addAccount = async (req, res) => {
-    try {
-        const { platfrom, handle, avatarUrl } = req.body;
-        const accounts = await Account.create({ user: req.user._id, platfrom, handle, avatarUrl });
-        res.status(201).json(account)
-    } catch (error) {
-        res.status(500).json({
-            msg: error?.message || "server error "
         })
     }
 }
@@ -36,10 +20,9 @@ const addAccount = async (req, res) => {
 //disconnected account 
 //delete /api/accounts/:id
 
-
-
 const disconnectAccount = async () => {
     try {
+        console.log(req.parms.id)
         const account = await Account.findOne({ _id: req.parms.id, user: req.user._id });
         if (!account) {
             res.status(404).json({
@@ -58,7 +41,7 @@ const disconnectAccount = async () => {
                 })
             }
         }
-        await account.delekteOne()
+        await account.deleteOne()
         res.status(200).json({
             msg: "Accout deleted sucessfully "
         })
@@ -68,4 +51,4 @@ const disconnectAccount = async () => {
 }
 
 
-module.exports = { getAccounts, addAccount, disconnectAccount }
+module.exports = { getAccounts, disconnectAccount }
