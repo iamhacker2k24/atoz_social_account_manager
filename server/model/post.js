@@ -3,7 +3,7 @@ const Schema = moongose.Schema;
 
 const postSchema = new Schema({
     user: {
-        type: { type: Schema.Types.ObjectId, ref: "User", required: true }
+        type: Schema.Types.ObjectId, ref: "User", required: true
     },
     content: {
         type: String,
@@ -28,5 +28,5 @@ const postSchema = new Schema({
 })
 
 
-const post = moongose.model("post", post);
+const post = moongose.model("post", postSchema);
 module.exports = post;

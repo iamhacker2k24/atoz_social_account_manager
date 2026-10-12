@@ -82,53 +82,87 @@ const syncAccounts = async (req, res) => {
     try {
         const profileId = await getOrCreatezernioProfile(req.user);
 
-        const result = await zernio.accounts.listAccounts({ query: { profileId } });
-        const data = result.data;
-        // console.log(data)
-        const zernioAccounts = data?.accounts || (Array.isArray(data) ? data : []);
+        const result = await zernio.accounts.listAccounts({
+            query: { profileId }
+        });
 
-        const supportedPlatforms = ["twitter", "linkedin", "facebook", "instagram"];
-        const savedAccounts = [];
-        let seenIds = [];
+        const data = result.data;
+
+        const zernioAccounts =
+            data?.accounts || (Array.isArray(data) ? data : []);
+
+        const supportedPlatforms = [
+            "twitter",
+            "linkedin",
+            "facebook",
+            "instagram",
+            "facebook_page",
+            "linkedin_page",
+            "instagram_business"
+        ];
+
         for (const zAccount of zernioAccounts) {
             const zid = zAccount._id;
+
             if (!zid) {
                 console.warn("Skipping account with no ID");
                 continue;
             }
-            seenIds.push(zid);
 
-            const platform = supportedPlatforms.find(
-                (p) => (zAccount.platform || "").toLowerCase() === p
-            );
-            if (!platform) {
-                console.warn(`Skipping unsupported platform: ${zAccount.platform}`);
+            const platform = (zAccount.platform || "").toLowerCase();
+
+            if (!supportedPlatforms.includes(platform)) {
+                console.warn(
+                    `Skipping unsupported platform: ${zAccount.platform}`
+                );
                 continue;
             }
-            await Account.deleteMany({ user: req.user._id })
-            const account = await Account.findOneAndUpdate(
-                { zernioAccountId: zid },
+
+            const handle = zAccount.username || zAccount.profileUrl;
+
+            if (!handle) {
+                console.warn(`Skipping account with no handle: ${zid}`);
+                continue;
+            }
+
+            await Account.findOneAndUpdate(
                 {
                     user: req.user._id,
-                    platfrom: zAccount.platform,
-                    handle: zAccount.username || zAccount.profileUrl,
-                    status: zAccount.isActive,
-                    avatarUrl: zAccount.profileUrl,
-                    lastSyncedAt: new Date(),
-                    status: zAccount.isActive
+                    zernioAccountId: zid
                 },
-                { upsert: true, returnDocument: "after" }
+                {
+                    $set: {
+                        platfrom: platform,
+                        handle,
+                        status: Boolean(zAccount.isActive),
+                        avatarUrl: zAccount.profileUrl,
+                        lastSyncedAt: new Date()
+                    }
+                },
+                {
+                    upsert: true,
+                    new: true,
+                    runValidators: true,
+                    setDefaultsOnInsert: true
+                }
             );
-            await Account.findOne({ user: req.user._id })
-            savedAccounts.push(account);
-
         }
 
-        const accounts = await Account.find({ user: req.user._id });
-        res.json(accounts);
+        const accounts = await Account.find({
+            user: req.user._id
+        });
+
+        return res.status(200).json({
+            success: true,
+            accounts
+        });
 
     } catch (error) {
-        res.status(500).json({ msg: error?.message || "Server error" });
+        console.error("Sync accounts error:", error);
+
+        return res.status(500).json({
+            msg: error.message || "Server error"
+        });
     }
 };
 

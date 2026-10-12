@@ -6,6 +6,13 @@ const postRouter = express();
 
 
 
+
+//get cehecked  done via postman 
+
+//normal post 
+//scheudeuled post
+// ai post 
+
 postRouter.get("/", protect, getposts);
 postRouter.get("/generations", protect, getGenerations);
 postRouter.get("/", protect, upload.single("media"), getGenerations);

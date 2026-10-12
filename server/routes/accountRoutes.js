@@ -1,13 +1,11 @@
 const express = require("express");
 const { getAccounts, disconnectAccount } = require("../controllers/accountControllers");
 const protect = require("../middlewares/authMiddleWare");
-
 const accountRouter = express.Router();
 
-
-
-accountRouter.get("/", protect, getAccounts)
+//postman checking done perfectlu 
 accountRouter.delete("/:id", protect, disconnectAccount)
+accountRouter.get("/", protect, getAccounts)
 
 
 

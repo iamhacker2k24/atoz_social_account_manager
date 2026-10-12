@@ -1,5 +1,6 @@
 //get all accounts 
 
+const zernio = require("../config/zernio");
 const Account = require("../model/accounts")
 
 
@@ -20,10 +21,15 @@ const getAccounts = async (req, res) => {
 //disconnected account 
 //delete /api/accounts/:id
 
-const disconnectAccount = async () => {
+const disconnectAccount = async (req, res) => {
     try {
-        console.log(req.parms.id)
-        const account = await Account.findOne({ _id: req.parms.id, user: req.user._id });
+        // console.log("disconnecting")
+        console.log(req.params.id)
+        console.log(req.user._id)
+        const zernioAccountId = req.params.id;
+        const user = req.user._id
+        const account = await Account.findOne({ zernioAccountId: zernioAccountId, user: user });
+        console.log(account)
         if (!account) {
             res.status(404).json({
                 msg: "Account not found "
@@ -31,7 +37,7 @@ const disconnectAccount = async () => {
             return;
         }
 
-        if (account.zernioAccountId) {
+        if (zernioAccountId) {
             try {
                 await zernio.accounts.deleteAccount({ path: { accountId: account.zernioAccountId } })
 
@@ -46,7 +52,7 @@ const disconnectAccount = async () => {
             msg: "Accout deleted sucessfully "
         })
     } catch (error) {
-
+        console.log(error.message)
     }
 }
 

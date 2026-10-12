@@ -3,7 +3,7 @@ const Schema = moongose.Schema;
 
 const generataionSchema = new Schema({
     user: {
-        type: { type: Schema.Types.ObjectId, ref: "User", required: true }
+        type: Schema.Types.ObjectId, ref: "User", required: true
     },
     prompt: {
         type: String, required: true

@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
 app.use("/api", authRouter)
 app.use("/api/oauth", socialAuthRouter)
 app.use("/api/accounts", accountRouter)
+
+// this last two left 
 app.use("/api/posts", postRouter)
 app.use("/api/activity",activityRouter)
 app.listen(PORT, async () => {
