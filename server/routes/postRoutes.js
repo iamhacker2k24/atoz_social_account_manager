@@ -13,11 +13,10 @@ const postRouter = express();
 //scheudeuled post
 // ai post 
 
-postRouter.get("/", protect, getposts);
-postRouter.get("/generations", protect, getGenerations);
+postRouter.post("/generatepost", generatePost);
 postRouter.get("/", protect, upload.single("media"), getGenerations);
 postRouter.get("/generate", protect, generatePost);
-
+postRouter.get("/", protect, getposts);
 
 
 

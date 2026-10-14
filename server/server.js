@@ -26,7 +26,7 @@ app.use("/api/accounts", accountRouter)
 
 // this last two left 
 app.use("/api/posts", postRouter)
-app.use("/api/activity",activityRouter)
+app.use("/api/activity", activityRouter)
 app.listen(PORT, async () => {
     await dbConnection()
     console.log("server started ")

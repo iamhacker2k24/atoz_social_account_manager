@@ -15,11 +15,11 @@ const str_json = (response) => {
         console.log(`error from json converter ${error.message}`)
     }
 }
-const genText = async ({ prompt, tone, ImagePrompt, platfrom }) => {
+const genText = async ({ prompt, tone, ImagePrompt }) => {
     try {
         const interaction = await ai.interactions.create({
-            model: "gemini-2.5-flash",
-            input: `Generate a social media post for ${platfrom} based on: "${prompt}", Tone: "${tone}".
+            model: "gemini-3.8-flash",
+            input: `Generate a social media post for social platfrom based on: "${prompt}", Tone: "${tone}".
             Include relevant hashtags. Return ONLY valid JSON with exactly two fields: "content" and "imagePrompt".
             No Markdown, code fences, or extra text. If ImagePrompt is true, generate a highly descriptive image-generation 
             prompt that complements the post; otherwise, set "imagePrompt" to an empty string. ImagePrompt: ${ImagePrompt}.
@@ -36,12 +36,12 @@ const genText = async ({ prompt, tone, ImagePrompt, platfrom }) => {
         console.log(`error fro text generations  by ai ${error.message}`)
     }
 }
-genText("a post for new app publishing ", "medium", true, "linkedin");
+// genText("a linkdin  post for new app publishing ", "medium", true, "linkedin");
 
 
 
 
-
+module.exports = genText;
 
 
 
