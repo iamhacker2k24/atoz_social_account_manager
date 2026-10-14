@@ -435,9 +435,67 @@ const ComposePost = async (req, res) => {
 
 
 const PublishedPost = async (req, res) => {
-    const id = req.user._id
-    const data = await Post.find({ user: id }).select("content platforms mediaItems status scheduledFor postId platformResults")
-    res.status(200).json(data)
-}
+    try {
+        const userId = req.user._id;
+
+        const posts = await Post.find({ user: userId }).select(
+            "content platforms mediaItems status scheduledFor postId platformResults"
+        );
+
+        const updatedPosts = await Promise.all(
+            posts.map(async (post) => {
+                if (!post.postId) return post;
+
+                try {
+                    const { data: fetched } = await zernio.posts.getPost({
+                        path: { postId: post.postId },
+                    });
+
+                    const latestPost = fetched?.post;
+
+                    if (!latestPost) return post;
+
+                    // Update overall post status
+                    if (latestPost.status) {
+                        post.status = latestPost.status;
+                    }
+
+                    // Update individual platform results
+                    if (Array.isArray(latestPost.platformResults)) {
+                        post.platformResults = latestPost.platformResults.map(
+                            (result) => ({
+                                platform: result.platform,
+                                platformPostId: result.platformPostId ?? null,
+                                platformPostUrl: result.platformPostUrl ?? null,
+                                status: result.status ?? "pending",
+                            })
+                        );
+                    }
+
+                    await post.save();
+
+                    return post;
+                } catch (error) {
+                    console.error(
+                        `Failed to sync post ${post.postId}:`,
+                        error?.response?.data || error.message || error
+                    );
+
+                    return post;
+                }
+            })
+        );
+
+        return res.status(200).json(
+            updatedPosts);
+    } catch (error) {
+        console.error("PublishedPost error:", error);
+
+        return res.status(500).json({
+            success: false,
+            msg: error.message || "Failed to fetch published posts",
+        });
+    }
+};
 
 module.exports = { ComposePost, PublishedPost };

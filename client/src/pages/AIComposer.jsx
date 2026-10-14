@@ -180,9 +180,8 @@ const AIComposer = () => {
           </p>
         </div>
 
-        {/* =================================================
-            PROMPT
-        ================================================= */}
+        {/* 
+            PROMPT */}
 
         <div className="relative group mt-6">
           <textarea
@@ -217,9 +216,8 @@ const AIComposer = () => {
           </div>
         </div>
 
-        {/* =================================================
-            TONE + GENERATE
-        ================================================= */}
+        {/* 
+            TONE + GENERATE */}
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-5">
           {/* Tones */}
@@ -283,9 +281,8 @@ const AIComposer = () => {
           </span>
         </div>
 
-        {/* =================================================
-            GENERATION GRID
-        ================================================= */}
+        {/* 
+            GENERATION GRID */}
 
         {generations.length === 0 ? (
           <div className="py-12 text-center text-slate-400">
@@ -367,9 +364,9 @@ const AIComposer = () => {
       {activeScheduler && (
         <div className="fixed inset-0 min-h-screen z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl border border-slate-100 overflow-hidden">
-            {/* =================================================
+            {/* 
                 MODAL HEADER
-            ================================================= */}
+             */}
 
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <div>
@@ -392,9 +389,9 @@ const AIComposer = () => {
               </button>
             </div>
 
-            {/* =================================================
+            {/* 
                 MODAL BODY
-            ================================================= */}
+             */}
 
             <div className="max-h-[90vh] overflow-y-auto p-6 space-y-5">
               {/* Post preview */}
@@ -419,9 +416,9 @@ const AIComposer = () => {
                 </div>
               </div>
 
-              {/* =================================================
+              {/* 
                   PLATFORMS
-              ================================================= */}
+               */}
 
               <div>
                 <label className="block text-xs text-slate-500 uppercase mb-2">
@@ -454,9 +451,9 @@ const AIComposer = () => {
                 </div>
               </div>
 
-              {/* =================================================
+              {/* 
                   DATE + TIME
-              ================================================= */}
+               */}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Date */}
@@ -498,9 +495,9 @@ const AIComposer = () => {
                 </div>
               </div>
 
-              {/* =================================================
+              {/* 
                   SCHEDULE BUTTON
-              ================================================= */}
+               */}
 
               <button
                 type="button"
