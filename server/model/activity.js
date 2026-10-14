@@ -3,7 +3,7 @@ const Schema = moongose.Schema;
 
 const activitySchema = new Schema({
     user: {
-        type: { type: Schema.Types.ObjectId, ref: "User", required: true }
+        type: Schema.Types.ObjectId, ref: "User", required: true
     },
     actionType: {
         type: String, enum: ["POST_PUBLISHED", "AI_REPLAY"],

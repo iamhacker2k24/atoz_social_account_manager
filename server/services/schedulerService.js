@@ -1,4 +1,4 @@
-const corn = require("node-corn");
+const corn = require("node-cron");
 const post = require("../model/post");
 const Account = require("../model/accounts");
 

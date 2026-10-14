@@ -4,46 +4,61 @@ const zernio = require("../config/zernio");
 const Account = require("../model/accounts");
 const User = require("../model/User");
 //this will help us to  ensure user has a zernio profile  or not 
-const getOrCreatezernioProfile = async (user) => {
+
+const getOrCreateZernioProfile = async (user) => {
     try {
-        // console.log(user)
-        const result = await zernio.profiles.listProfiles();
-        // console.log(result)
-        const data = result.data;
-        const profiles = Array.isArray(data) ? data : data?.profiles || data?.data || [];
-        // console.log(profiles)
-        if (profiles.length > 0) {
-            const pid = profiles[0]._id || profiles[0].id;
-            await User.findById(User._id, { zernioProfileId: pid })
-            return pid;
+        if (!user?._id) {
+            throw new Error("User is required");
         }
+
+        // 1. Reuse this user's existing profile.
+        if (user.zernioProfileId) {
+            return user.zernioProfileId;
+        }
+
+        // 2. Create a new profile for this user.
         const createResult = await zernio.profiles.createProfile({
             body: {
-                name: `name :${user.name || user.email}'s workspace`
+                name: `${user.name || user.email}'s workspace`,
+            },
+        });
 
-            }
-        })
-        console.log(createResult)
-        const created = (createResult.data) ? profiles : createResult.data
-        const pid = created?._id || created?.id;
-        if (!pid) {
-            throw new Error("Failed to create zernio profiles -no ID returened ")
+        console.log("Zernio profile response:", createResult);
+
+        const created = createResult.data?.profile ?? createResult.data;
+
+        const profileId = created?._id || created?.id;
+
+        if (!profileId) {
+            throw new Error("Zernio did not return a profile ID");
         }
-        console.log("getting profile id ... done")
-        return pid;
+
+        // 3. Save the profile ID to the correct user.
+        await User.findByIdAndUpdate(user._id, {
+            $set: { zernioProfileId: profileId },
+        });
+
+        console.log("Zernio profile created and saved:", profileId);
+
+        return profileId;
+    } catch (error) {
+        console.error(
+            "Zernio profile error:",
+            error?.response?.data || error?.message || error
+        );
+
+        throw error;
     }
-    catch (error) {
-        console.log("create zernio profile error ", error?.message || error)
-    }
-}
+};
+
 
 // //get .api/auth/:platfrom //completed 
 const generateAuthUrl = async (req, res) => {
     try {
         const platfrom = req.params.platform;
         console.log(req.user)
-        const profileId = await getOrCreatezernioProfile(req.user)
-
+        const profileId = await getOrCreateZernioProfile(req.user)
+        console.log(profileId)
         // const origin = req.headers.origin;
         // console.log("origin")
         // console.log(origin)
@@ -81,7 +96,7 @@ const generateAuthUrl = async (req, res) => {
 const syncAccounts = async (req, res) => {
     try {
         const profileId = await getOrCreatezernioProfile(req.user);
-        console.log(req.user)
+        console.log(profileId)
         const result = await zernio.accounts.listAccounts({
             query: { profileId }
         });

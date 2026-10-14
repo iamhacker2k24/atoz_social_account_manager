@@ -52,7 +52,9 @@ const disconnectAccount = async (req, res) => {
             msg: "Accout deleted sucessfully "
         })
     } catch (error) {
-        console.log(error.message)
+        return res.status(500).json({
+            msg: error?.response?.data?.message || error?.message
+        });
     }
 }
 

@@ -5,7 +5,7 @@ const dbConnection = async () => {
         await moongosh.connect(process.env.DB_URL);
         console.log("Data base conncetd ")
     } catch (error) {
-        console.error()
+        console.error("DB connection error:", error);
 
     }
 }
