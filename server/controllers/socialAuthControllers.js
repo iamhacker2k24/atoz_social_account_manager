@@ -41,7 +41,7 @@ const getOrCreatezernioProfile = async (user) => {
 const generateAuthUrl = async (req, res) => {
     try {
         const platfrom = req.params.platform;
-        // console.log(req.user)
+        console.log(req.user)
         const profileId = await getOrCreatezernioProfile(req.user)
 
         // const origin = req.headers.origin;
@@ -81,7 +81,7 @@ const generateAuthUrl = async (req, res) => {
 const syncAccounts = async (req, res) => {
     try {
         const profileId = await getOrCreatezernioProfile(req.user);
-
+        console.log(req.user)
         const result = await zernio.accounts.listAccounts({
             query: { profileId }
         });
