@@ -1,83 +1,443 @@
 
-const { GoogleGenAI } = require("@google/genai");
-const Generation = require("../model/Generation");
-const post = require("../model/post");
-const genText = require("../services/textGen");
-const photoGen = require("../services/photoGen");
+const axios = require("axios");
+const Post = require("../model/post");
+const Account = require("../model/accounts");
+const zernio = require("../config/zernio");
 
+const ALLOWED_PLATFORMS = [
+    "instagram",
+    "linkedin",
+    "facebook",
+    "twitter",
+];
 
-//get posts       
-//post /api/posts= 
-//postman done
-const getposts = async (req, res) => {
-    try {
-        const posts = await post.find({ user: req.user._id });
-        res.json(posts)
+const ALLOWED_MEDIA_TYPES = new Set([
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "video/mp4",
+    "video/mpeg",
+    "video/quicktime",
+    "video/avi",
+    "video/x-msvideo",
+    "video/webm",
+    "video/x-m4v",
+]);
 
-    } catch (error) {
-        res.status(500).json({
-            msg: error?.message || "Server error "
-        })
+// Handle duplicate FormData fields and whitespace.
+const cleanValue = (value) => {
+    if (Array.isArray(value)) {
+        value = value[value.length - 1];
     }
 
-}
+    return typeof value === "string" ? value.trim() : value;
+};
 
+const parseBoolean = (value) =>
+    value === true ||
+    (typeof value === "string" &&
+        value.toLowerCase() === "true");
 
+const getMediaType = (mimetype) => {
+    if (mimetype.startsWith("image/")) return "image";
+    if (mimetype.startsWith("video/")) return "video";
+    return null;
+};
 
-
-//generate post 
-//post /api/posts/generate 
-//
-const generatePost = async (req, res) => {
-    try {
-        // console.log(req.body)
-        const { prompt, tone, isPhoto } = req.body
-        // const result = genText(prompt, tone, isPhoto)
-        // .then(result => {
-        // console.log("genText finished with result:", result);
-        // Return the next promise to keep the chain going
-        photoGen();
-        // })
-        // res.send(result)
-    } catch (error) {
-        console.log(`error from text genereation ${error.message}`)
+// Upload one image/video to Zernio storage.
+const uploadToZernio = async (file) => {
+    if (!ALLOWED_MEDIA_TYPES.has(file.mimetype)) {
+        throw new Error(
+            `Unsupported media type: ${file.mimetype}`
+        );
     }
-}
+
+    const { data: presigned } =
+        await zernio.media.getMediaPresignedUrl({
+            body: {
+                filename: file.originalname,
+                contentType: file.mimetype,
+                size: file.size,
+            },
+        });
+
+    if (!presigned?.uploadUrl || !presigned?.publicUrl) {
+        throw new Error(
+            "Zernio did not return valid media upload URLs."
+        );
+    }
+
+    await axios.put(presigned.uploadUrl, file.buffer, {
+        headers: {
+            "Content-Type": file.mimetype,
+        },
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+    });
+
+    return {
+        url: presigned.publicUrl,
+        type: getMediaType(file.mimetype),
+    };
+};
 
 
+const ComposePost = async (req, res) => {
+    let localPost = null;
+    let zernioAccepted = false;
+    let zernioPostId = null;
 
-
-//getGenerations  post 
-//get /api/posts/generations  
-const getGenerations = async (req, res) => {
-
-}
-
-
-
-//schedule  posts  
-//post /api/posts= 
-const schedulePost = async (req, res) => {
     try {
-        const { content, platfroms, scheduledFor, status } = req.body;
-        //parse platfrom if id some as a stringified arry from From data
-        let parsedPlatfroms = platfroms;
-        if (typeof platfroms === "string") {
+        // 1. Authenticate user.
+        const userId = req.user?._id;
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required.",
+            });
+        }
+
+        // 2. Normalize FormData.
+        const content = cleanValue(req.body?.content);
+        const platformsInput = cleanValue(req.body?.platforms);
+        const publishNow = parseBoolean(
+            cleanValue(req.body?.publishNow)
+        );
+        const scheduledForInput = cleanValue(
+            req.body?.scheduledFor
+        );
+        const timezone =
+            cleanValue(req.body?.timezone) || "Asia/Kolkata";
+
+        if (typeof content !== "string" || !content) {
+            return res.status(400).json({
+                success: false,
+                message: "Post content is required.",
+            });
+        }
+
+        // 3. Parse platforms.
+        let requestedPlatforms;
+
+        try {
+            requestedPlatforms =
+                typeof platformsInput === "string"
+                    ? JSON.parse(platformsInput)
+                    : platformsInput;
+        } catch {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid platforms JSON.",
+            });
+        }
+
+        if (
+            !Array.isArray(requestedPlatforms) ||
+            requestedPlatforms.length === 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Select at least one platform.",
+            });
+        }
+
+        requestedPlatforms = [
+            ...new Set(
+                requestedPlatforms.map((p) =>
+                    String(p).trim().toLowerCase()
+                )
+            ),
+        ];
+
+        const invalidPlatforms = requestedPlatforms.filter(
+            (p) => !ALLOWED_PLATFORMS.includes(p)
+        );
+
+        if (invalidPlatforms.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Unsupported platform.",
+                invalidPlatforms,
+            });
+        }
+
+        // 4. Validate scheduling.
+        let scheduledDate = null;
+
+        if (!publishNow) {
+            if (!scheduledForInput) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Provide scheduledFor or set publishNow=true.",
+                });
+            }
+
+            scheduledDate = new Date(scheduledForInput);
+
+            if (
+                Number.isNaN(scheduledDate.getTime()) ||
+                scheduledDate.getTime() <= Date.now()
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Provide a valid future scheduledFor date.",
+                });
+            }
+
             try {
-                parsedPlatfroms = JSON.parse(platfroms);
-
-            } catch (error) {
-                parsedPlatfroms = platfroms.split(",")
+                Intl.DateTimeFormat("en-US", {
+                    timeZone: timezone,
+                });
+            } catch {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid timezone.",
+                });
             }
         }
-    } catch (error) {
-        res.status(500).json({
-            msg: error?.message || "Server error "
-        })
-    }
 
+        // 5. Find connected accounts for this user.
+        const accounts = await Account.find({
+            user: userId,
+            platfrom: { $in: requestedPlatforms },
+        }).select("zernioAccountId platfrom");
+
+        const accountByPlatform = new Map();
+
+        for (const account of accounts) {
+            if (
+                account.zernioAccountId &&
+                !accountByPlatform.has(account.platfrom)
+            ) {
+                accountByPlatform.set(account.platfrom, account);
+            }
+        }
+
+        const missingPlatforms = requestedPlatforms.filter(
+            (p) => !accountByPlatform.has(p)
+        );
+
+        if (missingPlatforms.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Connect the missing accounts first.",
+                missingPlatforms,
+            });
+        }
+
+        const zernioPlatforms = requestedPlatforms.map(
+            (platform) => ({
+                platform,
+                accountId:
+                    accountByPlatform.get(platform).zernioAccountId,
+            })
+        );
+
+        // 6. Validate media.
+        const files = req.files || [];
+
+        if (files.length > 10) {
+            return res.status(400).json({
+                success: false,
+                message: "Upload at most 10 media files.",
+            });
+        }
+
+        for (const file of files) {
+            if (!ALLOWED_MEDIA_TYPES.has(file.mimetype)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Unsupported media type: ${file.mimetype}`,
+                });
+            }
+        }
+
+        const imageFiles = files.filter((f) =>
+            f.mimetype.startsWith("image/")
+        );
+
+        const videoFiles = files.filter((f) =>
+            f.mimetype.startsWith("video/")
+        );
+
+        if (videoFiles.length > 1) {
+            return res.status(400).json({
+                success: false,
+                message: "Only one video is supported.",
+            });
+        }
+
+        if (
+            requestedPlatforms.includes("linkedin") &&
+            imageFiles.length > 0 &&
+            videoFiles.length > 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "For LinkedIn, use images or one video, not both.",
+            });
+        }
+
+        // 7. Upload media before creating the post record.
+        const mediaItems = [];
+
+        for (const file of files) {
+            mediaItems.push(await uploadToZernio(file));
+        }
+
+        // 8. Save MongoDB record FIRST.
+        // Ensure platformResults is an array of subdocuments
+        // in your Post schema, not a String.
+        localPost = await Post.create({
+            user: userId,
+            content,
+            mediaItems,
+            platforms: requestedPlatforms,
+            platformResults: requestedPlatforms.map((platform) => ({
+                platform,
+                platformPostId: null,
+                platformPostUrl: null,
+                status: "pending",
+            })),
+            scheduledFor: publishNow ? null : scheduledDate,
+            timezone,
+            postId: null,
+            status: publishNow ? "publishing" : "scheduling",
+        });
+
+        // 9. Call Zernio ONLY after the local save succeeds.
+        const body = {
+            content,
+            platforms: zernioPlatforms,
+            publishNow,
+        };
+
+        if (mediaItems.length) {
+            body.mediaItems = mediaItems;
+        }
+
+        if (!publishNow) {
+            body.scheduledFor = scheduledForInput;
+            body.timezone = timezone;
+        }
+
+        const { data: result } =
+            await zernio.posts.createPost({ body });
+
+        const zernioPost = result?.post;
+
+        if (!zernioPost?._id) {
+            throw new Error(
+                "Zernio returned no post ID; publishing outcome is uncertain."
+            );
+        }
+
+        zernioAccepted = true;
+        zernioPostId = zernioPost._id;
+
+        // 10. Map results for each platform.
+        const platformResults = (zernioPost.platforms || []).map(
+            (item) => ({
+                platform: item.platform,
+                platformPostId: item.platformPostId || null,
+                platformPostUrl: item.platformPostUrl || null,
+                status: item.status || "pending",
+            })
+        );
+
+        for (const platform of requestedPlatforms) {
+            if (
+                !platformResults.some(
+                    (item) => item.platform === platform
+                )
+            ) {
+                platformResults.push({
+                    platform,
+                    platformPostId: null,
+                    platformPostUrl: null,
+                    status: zernioPost.status || "pending",
+                });
+            }
+        }
+
+        // 11. Update the existing MongoDB record.
+        const updatedPost = await Post.findByIdAndUpdate(
+            localPost._id,
+            {
+                $set: {
+                    postId: zernioPost._id,
+                    status: zernioPost.status || "pending",
+                    scheduledFor: zernioPost.scheduledFor || null,
+                    timezone: zernioPost.timezone || timezone,
+                    platformResults,
+                },
+            },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
+
+        if (!updatedPost) {
+            throw new Error(
+                "Zernio succeeded, but the MongoDB record could not be updated."
+            );
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: result.message || "Post created successfully.",
+            post: updatedPost,
+            zernio: zernioPost,
+        });
+    } catch (error) {
+        console.error(
+            "ComposePost error:",
+            error.response?.data || error.message
+        );
+
+        // 12. Roll back the local record on failure.
+        if (localPost?._id) {
+            try {
+                await Post.deleteOne({
+                    _id: localPost._id,
+                    user: req.user?._id,
+                });
+            } catch (deleteError) {
+                console.error(
+                    "Failed to delete local post:",
+                    localPost._id,
+                    deleteError.message
+                );
+            }
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: zernioAccepted
+                ? "Zernio accepted the post, but saving the final result failed. The local record was scheduled for cleanup; check Zernio before retrying."
+                : "Post creation failed. The local record was scheduled for cleanup.",
+            zernioAccepted,
+            zernioPostId,
+            error:
+                error.response?.data?.message ||
+                error.response?.data ||
+                error.message,
+        });
+    }
+};
+
+
+
+const PublishedPost = async (req, res) => {
+    const id = req.user._id
+    const data = await Post.find({ user: id }).select("content platforms mediaItems status scheduledFor postId platformResults")
+    res.status(200).json(data)
 }
 
-// 6.01
-
-module.exports = { getposts, generatePost, getGenerations, schedulePost }
+module.exports = { ComposePost, PublishedPost };

@@ -1,22 +1,17 @@
 const express = require("express");
 const protect = require("../middlewares/authMiddleWare");
-const { getposts, getGenerations, generatePost } = require("../controllers/postControllers");
+const { ComposePost, PublishedPost } = require("../controllers/postControllers");
 const upload = require("../config/multer");
 const postRouter = express();
 
 
 
 
-//get cehecked  done via postman 
+// Schedule page  full router 
+postRouter.post("/composepost", protect, upload.array("media", 10), ComposePost);
+postRouter.get("/publishedpost", protect, PublishedPost);
+// postRouter.get("/upcommingpost", protect, UpcommingPost);
 
-//normal post 
-//scheudeuled post
-// ai post 
-
-postRouter.post("/generatepost", generatePost);
-postRouter.get("/", protect, upload.single("media"), getGenerations);
-postRouter.get("/generate", protect, generatePost);
-postRouter.get("/", protect, getposts);
 
 
 
