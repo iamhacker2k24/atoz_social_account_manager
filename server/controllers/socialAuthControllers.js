@@ -6,6 +6,7 @@ const User = require("../model/User");
 //this will help us to  ensure user has a zernio profile  or not 
 
 const getOrCreateZernioProfile = async (user) => {
+    console.log(user)
     try {
         if (!user?._id) {
             throw new Error("User is required");
@@ -19,7 +20,7 @@ const getOrCreateZernioProfile = async (user) => {
         // 2. Create a new profile for this user.
         const createResult = await zernio.profiles.createProfile({
             body: {
-                name: `${user.name || user.email}'s workspace`,
+                name: `${user._id || user.email}'s workspace`,
             },
         });
 
@@ -95,7 +96,7 @@ const generateAuthUrl = async (req, res) => {
 //post man configuration done 
 const syncAccounts = async (req, res) => {
     try {
-        const profileId = await getOrCreatezernioProfile(req.user);
+        const profileId = await getOrCreateZernioProfile(req.user);
         console.log(profileId)
         const result = await zernio.accounts.listAccounts({
             query: { profileId }

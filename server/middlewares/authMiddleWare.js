@@ -14,6 +14,7 @@ const protect = async (req, res, next) => {
                 req.user = await User.findById(decode.id).select("-password")
                 // console.log(req.user)//all cehecked 
                 console.log("verification done from protect ")
+                console.log(req.user)
                 next();
 
             } catch (error) {
