@@ -1,4 +1,3 @@
-
 const axios = require("axios");
 const Post = require("../model/post");
 const Account = require("../model/accounts");
@@ -45,8 +44,6 @@ const getMediaType = (mimetype) => {
     if (mimetype.startsWith("video/")) return "video";
     return null;
 };
-
-
 
 const ComposePost = async (req, res) => {
     let localPost = null;
@@ -395,8 +392,6 @@ const ComposePost = async (req, res) => {
         });
     }
 };
-
-
 
 const PublishedPost = async (req, res) => {
     try {
