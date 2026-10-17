@@ -1,14 +1,9 @@
-import OpenAI from "openai";
 
-const client = new OpenAI({
-    // apiKey:process.env.TOKENHARBOR,
-    apiKey: "thk_live_XpkW09EOlwsXcFqYIA30LkX42wxridGT34F3oRKdJdPMjgr7MPNlvvkAP8Ma7h9F",
-    baseURL: "https://tokenharbor.ai/v1",
-    timeout: 60000,
-    maxRetries: 2,
-});
-
+const ai = require("../config/ai");
 const MODEL = "deepseek-v4.1-flash:free";
+
+
+
 
 
 function str_json(response) {
@@ -43,20 +38,13 @@ function str_json(response) {
     }
 }
 
-export async function main({
-    prompt,
-    tone = "medium",
-    ImagePrompt = false,
-    platform = "linkedin",
-}) {
+const textGen = async (prompt, tone = "medium", ImagePrompt = true) => {
     // if (!process.env.TOKENHARBOR_API_KEY) {
     //     throw new Error("TOKENHARBOR_API_KEY is missing from .env");
     // }
-
     // if (!prompt || typeof prompt !== "string") {
     //     throw new Error("A valid post prompt is required.");
     // }
-
     const systemPrompt = `
 You are an expert social media content strategist and AI image-prompt writer.
 
@@ -88,7 +76,6 @@ Return valid JSON only. Escape quotation marks and special characters correctly.
 `;
 
     const userPrompt = `
-Target platform: ${platform}
 Topic and instructions: ${prompt}
 Requested tone: ${tone}
 Generate image prompt: ${ImagePrompt ? "YES" : "NO"}
@@ -97,7 +84,7 @@ Create the final post for publication on the specified platform.
 `;
 
     try {
-        const res = await client.chat.completions.create({
+        const res = await ai.chat.completions.create({
             model: MODEL,
             messages: [
                 {
@@ -134,7 +121,7 @@ Create the final post for publication on the specified platform.
             result.imagePrompt = "";
         }
 
-        console.log("Generated social media post:");
+        // console.log("Generated social media post:");
         console.log(JSON.stringify(result, null, 2));
 
         return result;
@@ -145,10 +132,13 @@ Create the final post for publication on the specified platform.
 }
 
 // Example usage
-main({
-    prompt:
-        "I am going to launch a mobile study app for students, built with React Native. Highlight how it can help students study more effectively.",
-    tone: "professional and engaging",
-    ImagePrompt: false,
-    platform: "linkedin",
-})
+// textGen({
+//     prompt:
+//         "I am going to launch a mobile study app for students, built with React Native. Highlight how it can help students study more effectively.",
+//     tone: "professional and engaging",
+//     ImagePrompt: false,
+
+// })
+
+
+module.exports = textGen;

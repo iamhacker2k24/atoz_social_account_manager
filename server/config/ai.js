@@ -1,10 +1,12 @@
 
 require('dotenv').config();
-const { GoogleGenAI } = require("@google/genai");
-// const apikey = 
-console.log(process.env.GEN_AI_API)
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEN_AI_API
+const OpenAI = require("openai");
+const ai = new OpenAI({
+    //api key name default to OPENAI_API_KEY..ok 
+    baseURL: "https://tokenharbor.ai/v1",
+    timeout: 60000,
+    maxRetries: 2,
 });
-module.exports = ai;
 
+
+module.exports = ai;

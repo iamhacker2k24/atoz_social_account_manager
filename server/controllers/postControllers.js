@@ -2,7 +2,8 @@ const axios = require("axios");
 const Post = require("../model/post");
 const Account = require("../model/accounts");
 const zernio = require("../config/zernio");
-const uploadToZernio = require("../config/UploadInZernio")
+const uploadToZernio = require("../config/UploadInZernio");
+const textGen = require("../services/textGen");
 const allowedPlatform = [
     "instagram",
     "linkedin",
@@ -25,7 +26,7 @@ const allowedMediaTypes = new Set([
     "video/x-m4v",
 ]);
 
-// yea dublicate value ko arrehnge korega 
+// yea duplicate value ko arrehnge korega 
 const cleanValue = (value) => {
     if (Array.isArray(value)) {
         value = value[value.length - 1];
@@ -457,4 +458,26 @@ const PublishedPost = async (req, res) => {
     }
 };
 
-module.exports = { ComposePost, PublishedPost };
+
+const generateContent = async (req, res) => {
+    try {
+
+        const { prompt, tone } = req.body;
+        if (prompt == null) {
+            return res.status(400).json({
+                msg: "Please add all fields"
+            });
+        }
+        const result = await textGen(prompt, tone)
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(
+            `Failed to call agent  post `,
+            error?.response?.data || error.message || error
+        );
+
+    }
+
+}
+
+module.exports = { ComposePost, PublishedPost, generateContent };
