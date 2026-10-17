@@ -3,15 +3,15 @@ const axios = require("axios");
 const Post = require("../model/post");
 const Account = require("../model/accounts");
 const zernio = require("../config/zernio");
-
-const ALLOWED_PLATFORMS = [
+const uploadToZernio = require("../config/UploadInZernio")
+const allowedPlatform = [
     "instagram",
     "linkedin",
     "facebook",
     "twitter",
 ];
 
-const ALLOWED_MEDIA_TYPES = new Set([
+const allowedMediaTypes = new Set([
     "image/jpeg",
     "image/jpg",
     "image/png",
@@ -26,7 +26,7 @@ const ALLOWED_MEDIA_TYPES = new Set([
     "video/x-m4v",
 ]);
 
-// Handle duplicate FormData fields and whitespace.
+// yea dublicate value ko arrehnge korega 
 const cleanValue = (value) => {
     if (Array.isArray(value)) {
         value = value[value.length - 1];
@@ -46,42 +46,6 @@ const getMediaType = (mimetype) => {
     return null;
 };
 
-// Upload one image/video to Zernio storage.
-const uploadToZernio = async (file) => {
-    if (!ALLOWED_MEDIA_TYPES.has(file.mimetype)) {
-        throw new Error(
-            `Unsupported media type: ${file.mimetype}`
-        );
-    }
-
-    const { data: presigned } =
-        await zernio.media.getMediaPresignedUrl({
-            body: {
-                filename: file.originalname,
-                contentType: file.mimetype,
-                size: file.size,
-            },
-        });
-
-    if (!presigned?.uploadUrl || !presigned?.publicUrl) {
-        throw new Error(
-            "Zernio did not return valid media upload URLs."
-        );
-    }
-
-    await axios.put(presigned.uploadUrl, file.buffer, {
-        headers: {
-            "Content-Type": file.mimetype,
-        },
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity,
-    });
-
-    return {
-        url: presigned.publicUrl,
-        type: getMediaType(file.mimetype),
-    };
-};
 
 
 const ComposePost = async (req, res) => {
@@ -153,7 +117,7 @@ const ComposePost = async (req, res) => {
         ];
 
         const invalidPlatforms = requestedPlatforms.filter(
-            (p) => !ALLOWED_PLATFORMS.includes(p)
+            (p) => !allowedPlatform.includes(p)
         );
 
         if (invalidPlatforms.length) {
@@ -248,7 +212,7 @@ const ComposePost = async (req, res) => {
         }
 
         for (const file of files) {
-            if (!ALLOWED_MEDIA_TYPES.has(file.mimetype)) {
+            if (!allowedMediaTypes.has(file.mimetype)) {
                 return res.status(400).json({
                     success: false,
                     message: `Unsupported media type: ${file.mimetype}`,
