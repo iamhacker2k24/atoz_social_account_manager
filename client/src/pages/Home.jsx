@@ -9,16 +9,18 @@ import Footer from "../components/Home/Footer";
 
 const Home = () => {
   return (
-    <>
+    <div className="min-h-screen bg-white text-slate-900 selection:bg-emerald-500 selection:text-white flex flex-col w-full overflow-x-hidden">
       <Navbar />
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <Testimonials />
-      <Pricing />
-      <CTA />
+      <main className="flex-1 w-full">
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <Testimonials />
+        <Pricing />
+        <CTA />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

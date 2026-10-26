@@ -26,7 +26,12 @@ const allowedMediaTypes = new Set([
     "video/x-m4v",
 ]);
 
+
+
+
+
 // yea duplicate value ko arrehnge korega 
+
 const cleanValue = (value) => {
     if (Array.isArray(value)) {
         value = value[value.length - 1];
@@ -35,16 +40,24 @@ const cleanValue = (value) => {
     return typeof value === "string" ? value.trim() : value;
 };
 
+
+
+
 const parseBoolean = (value) =>
     value === true ||
     (typeof value === "string" &&
         value.toLowerCase() === "true");
+
+
 
 const getMediaType = (mimetype) => {
     if (mimetype.startsWith("image/")) return "image";
     if (mimetype.startsWith("video/")) return "video";
     return null;
 };
+
+
+
 
 const ComposePost = async (req, res) => {
     let localPost = null;
@@ -63,6 +76,8 @@ const ComposePost = async (req, res) => {
         }
 
         // 2. Normalize FormData.
+        const isAiGen = cleanValue(req.body?.isAiGen);
+        // console.log(i)
         const content = cleanValue(req.body?.content);
         const platformsInput = cleanValue(req.body?.platforms);
         const publishNow = parseBoolean(
@@ -270,6 +285,7 @@ const ComposePost = async (req, res) => {
             timezone,
             postId: null,
             status: publishNow ? "publishing" : "scheduling",
+            isAiGen
         });
 
         // 9. Call Zernio ONLY after the local save succeeds.
@@ -394,6 +410,10 @@ const ComposePost = async (req, res) => {
     }
 };
 
+
+
+
+
 const PublishedPost = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -469,6 +489,7 @@ const generateContent = async (req, res) => {
             });
         }
         const result = await textGen(prompt, tone)
+
         res.status(200).json(result)
     } catch (error) {
         console.error(
@@ -480,4 +501,12 @@ const generateContent = async (req, res) => {
 
 }
 
-module.exports = { ComposePost, PublishedPost, generateContent };
+
+const uploadGeneration = async (req, res) => {
+
+}
+
+
+
+
+module.exports = { ComposePost, PublishedPost, generateContent, uploadGeneration };

@@ -1,58 +1,109 @@
 import { Link } from "react-router-dom";
+import { ArrowUpIcon } from "lucide-react";
 
 const footerLinks = {
-    Product: ["Features", "How it works", "Pricing", "Changelog"],
-    Company: ["About", "Blog", "Careers", "Press"],
-    Legal: ["Privacy", "Terms", "Security", "Cookies"],
+  Product: [
+    { label: "Features", href: "#features" },
+    { label: "How it works", href: "#how-it-works" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Changelog", href: "#" },
+  ],
+  Platform: [
+    { label: "Twitter / X Sync", href: "#" },
+    { label: "LinkedIn Integration", href: "#" },
+    { label: "Instagram Publisher", href: "#" },
+    { label: "Facebook Pages", href: "#" },
+  ],
+  Resources: [
+    { label: "AI Copywriter", href: "#" },
+    { label: "Social Strategy Guide", href: "#" },
+    { label: "Help Documentation", href: "#" },
+    { label: "API Reference", href: "#" },
+  ],
+  Company: [
+    { label: "About Us", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Service", href: "#" },
+  ],
 };
 
 export default function Footer() {
-    return (
-        <footer style={{ background: "#fafafa", borderTop: "1px solid rgba(0,0,0,0.07)" }}>
-            <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
-                    {/* Brand */}
-                    <div className="lg:col-span-2">
-                        <Link to="/" onClick={() => scrollTo(0, 0)} className="inline-flex items-center gap-2 mb-5">
-                            <img src="/logo.svg" alt="logo" className="size-6" />
-                            <span className="font-medium font-serif text-xl text-gray-800">Scheduler</span>
-                        </Link>
-                        <p className="text-sm text-gray-500 leading-relaxed max-w-xs">The AI-powered social media scheduler that helps creators and teams grow faster with less effort.</p>
-                    </div>
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-                    {/* Links */}
-                    {Object.entries(footerLinks).map(([category, links]) => (
-                        <div key={category}>
-                            <div className="text-xs font-semibold uppercase tracking-widest mb-5 text-gray-600">{category}</div>
-                            <ul className="space-y-1">
-                                {links.map((link) => (
-                                    <li key={link}>
-                                        <a href="#" className="text-sm text-gray-500 hover:text-gray-900">
-                                            {link}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <footer className="bg-slate-900 text-slate-300 border-t border-slate-800">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 lg:gap-12 mb-16">
+          {/* Brand Info */}
+          <div className="col-span-2">
+            <Link
+              to="/"
+              onClick={scrollToTop}
+              className="inline-flex items-center gap-2.5 mb-5 group"
+            >
+              <img src="/logo.svg" alt="logo" className="size-7 transition-transform group-hover:scale-105" />
+              <span className="font-semibold font-serif text-2xl text-white tracking-tight">
+                Scheduler<span className="text-emerald-400">.</span>
+              </span>
+            </Link>
 
-                {/* Bottom bar */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8" style={{ borderTop: "1px solid rgba(0,0,0,0.07)" }}>
-                    <p className="text-xs text-gray-400">© {new Date().getFullYear()} Scheduler. All rights reserved.</p>
-                    <div className="flex items-center gap-6">
-                        <a href="#" className="text-xs text-gray-400 hover:text-gray-700">
-                            Privacy Policy
-                        </a>
-                        <a href="#" className="text-xs text-gray-400 hover:text-gray-700">
-                            Terms of Service
-                        </a>
-                        <Link to="/login" className="text-xs text-gray-400 hover:text-gray-700">
-                            Sign In
-                        </Link>
-                    </div>
-                </div>
+            <p className="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
+              The AI-driven multi-platform social media scheduler built for modern creators, agencies, and high-growth businesses.
+            </p>
+
+            <div className="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full w-fit">
+              <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>All Systems Operational</span>
             </div>
-        </footer>
-    );
+          </div>
+
+          {/* Links Columns */}
+          {Object.entries(footerLinks).map(([category, links]) => (
+            <div key={category} className="col-span-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-100 mb-4">
+                {category}
+              </div>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-slate-400 hover:text-emerald-400 transition-colors inline-block"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-slate-800 text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} Scheduler Inc. All rights reserved.</p>
+
+          <div className="flex items-center gap-6">
+            <Link to="/login" className="hover:text-emerald-400 transition-colors">
+              Sign In
+            </Link>
+            <a href="#features" className="hover:text-emerald-400 transition-colors">
+              Platform Features
+            </a>
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-1.5 text-slate-400 hover:text-emerald-400 transition-colors"
+              title="Back to top"
+            >
+              <span>Back to top</span>
+              <ArrowUpIcon className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

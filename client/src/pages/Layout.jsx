@@ -17,7 +17,7 @@ const Layout = () => {
   const title = pageTitles[location.pathname] || "Social Website";
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900">
+    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900">
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
@@ -30,7 +30,7 @@ const Layout = () => {
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
 
       {/* Main Section */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col h-full overflow-hidden">
         {/* Top Header */}
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-4 shadow-sm sm:px-6 md:px-8">
           {/* Mobile Menu Button */}
@@ -61,7 +61,7 @@ const Layout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 md:p-8 xl:p-10">
             <Outlet />
           </div>

@@ -1,91 +1,183 @@
 import { Link } from "react-router-dom";
-import { ArrowRightIcon, DotIcon } from "lucide-react";
+import { ArrowRightIcon, CheckCircle2Icon, SparklesIcon, TrendingUpIcon } from "lucide-react";
 
 export default function Hero() {
-    return (
-        <section className="relative overflow-hidden">
-            {/* Subtle grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-size-[56px_56px] pointer-events-none" />
+  return (
+    <section className="relative overflow-hidden pt-6 pb-20 sm:pb-28">
+      {/* Background Subtle Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
 
-            {/* Red soft glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[560px] bg-[radial-gradient(ellipse_at_center,rgba(239,68,68,0.08)_0%,transparent_70%)] pointer-events-none" />
+      {/* Emerald Ambient Glows */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] sm:w-[950px] h-[480px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.12)_0%,rgba(5,150,105,0.04)_45%,transparent_70%)] pointer-events-none" />
+      <div className="absolute top-48 left-1/4 -translate-x-1/2 w-72 h-72 rounded-full bg-emerald-400/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-64 right-1/4 translate-x-1/2 w-80 h-80 rounded-full bg-teal-400/5 blur-3xl pointer-events-none" />
 
-            <div className="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-12 text-center">
-                {/* Badge */}
-                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-500 text-sm px-3.5 py-1.5 rounded-full mb-8">
-                    <span className="size-1.5 bg-red-400 rounded-full" />
-                    AI-Powered Social Media Automation
-                </div>
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-emerald-50/90 border border-emerald-200/80 text-emerald-800 text-xs sm:text-sm font-medium px-4 py-1.5 rounded-full mb-6 sm:mb-8 shadow-xs backdrop-blur-sm transition-transform hover:scale-105">
+          <span className="relative flex size-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full size-2 bg-emerald-500" />
+          </span>
+          <span className="flex items-center gap-1.5 font-semibold">
+            <SparklesIcon className="size-3.5 text-emerald-600" />
+            Next-Gen Social Media Automation
+          </span>
+        </div>
 
-                {/* Headline */}
-                <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl xl:text-8xl text-slate-900">
-                    Schedule smarter.
-                    <br />
-                    <span className="text-red-400 italic">Grow faster.</span>
-                </h1>
+        {/* Headline */}
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-slate-900 leading-[1.08]">
+          Schedule smarter.
+          <br />
+          <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 bg-clip-text text-transparent italic font-serif">
+            Grow faster.
+          </span>
+        </h1>
 
-                {/* Subheadline */}
-                <p className="mt-7 text-gray-500 max-w-2xl mx-auto">Scheduler lets you create, schedule, and auto-engage across all your social platforms — powered by AI that writes your captions and replies for you.</p>
+        {/* Subheadline */}
+        <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          Scheduler lets you create, schedule, and auto-engage across Twitter, LinkedIn, Facebook, and Instagram — powered by AI that writes captions and drives real audience growth.
+        </p>
 
-                {/* CTAs */}
-                <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <Link to="/login" className="bg-red-500 text-white rounded-full font-medium hover:bg-red-600 hover:shadow-[0_8px_24px_rgba(239,68,68,0.35)] inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto justify-center transition-all">
-                        Start for free <ArrowRightIcon className="size-4" />
-                    </Link>
-                    <a href="#how-it-works" className="bg-transparent text-[#333] border-[1.5px] border-black/10 rounded-full font-medium hover:bg-black/5 hover:border-black/20 inline-flex items-center gap-2 text-[15px] px-8 py-3.5 w-full sm:w-auto backdrop-blur justify-center transition-all">
-                        See how it works
-                    </a>
-                </div>
+        {/* CTAs */}
+        <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto sm:max-w-none">
+          <Link
+            to="/login"
+            className="w-full sm:w-auto bg-emerald-600 text-white rounded-full font-semibold hover:bg-emerald-700 hover:shadow-[0_10px_25px_rgba(16,185,129,0.35)] shadow-md shadow-emerald-600/20 inline-flex items-center justify-center gap-2 text-base px-8 py-3.5 transition-all transform active:scale-[0.98]"
+          >
+            <span>Start for free</span>
+            <ArrowRightIcon className="size-4" />
+          </Link>
+          <a
+            href="#how-it-works"
+            className="w-full sm:w-auto bg-white/80 hover:bg-white text-slate-700 border border-slate-200/90 rounded-full font-semibold hover:border-emerald-300 hover:text-emerald-700 inline-flex items-center justify-center gap-2 text-base px-8 py-3.5 backdrop-blur-sm transition-all shadow-2xs active:scale-[0.98]"
+          >
+            <span>See how it works</span>
+          </a>
+        </div>
 
-                <p className="mt-5 text-xs text-gray-400">No credit card required · Free forever plan available</p>
+        {/* Trust bullets */}
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2Icon className="size-4 text-emerald-600" />
+            No credit card required
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2Icon className="size-4 text-emerald-600" />
+            Free forever tier
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2Icon className="size-4 text-emerald-600" />
+            Setup in 2 minutes
+          </span>
+        </div>
+      </div>
+
+      {/* Modern Dashboard Mockup Preview */}
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+        <div className="relative rounded-2xl sm:rounded-3xl p-1.5 sm:p-2.5 bg-gradient-to-b from-emerald-100/60 via-slate-100 to-white shadow-2xl shadow-emerald-500/10 border border-emerald-100/70">
+          <div className="rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/80 bg-white">
+            {/* Window chrome header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-slate-50/90 border-b border-slate-200/80">
+              <div className="flex items-center gap-2">
+                <div className="size-3 rounded-full bg-red-400" />
+                <div className="size-3 rounded-full bg-amber-400" />
+                <div className="size-3 rounded-full bg-emerald-400" />
+                <span className="ml-2 hidden sm:inline-block text-xs font-medium text-slate-400">
+                  scheduler.app/dashboard
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full font-medium">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>All Systems Live</span>
+              </div>
             </div>
 
-            {/* Dashboard mockup */}
-            <div className="relative max-w-5xl mx-auto px-5 sm:px-8 pb-0">
-                <div className="rounded-t-2xl overflow-hidden border border-gray-200 border-b-0">
-                    {/* Browser chrome */}
-                    <div className="flex items-center gap-2 px-4 py-3" style={{ background: "#f0f0f0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                        <div className="w-3 h-3 rounded-full bg-red-400" />
-                        <div className="w-3 h-3 rounded-full bg-amber-400" />
-                        <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                        <div className="flex-1 mx-4 rounded-md h-5 max-w-xs bg-white/80" />
+            {/* Mock content */}
+            <div className="p-4 sm:p-7 bg-slate-50/50">
+              {/* Stat row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-5">
+                {[
+                  { val: "18", label: "Scheduled Posts", change: "+14%" },
+                  { val: "64", label: "Published Live", change: "+28%" },
+                  { val: "4", label: "Active Channels", change: "100% Synced" },
+                  { val: "99.8%", label: "Engagement Score", change: "+4.2%" },
+                ].map((s, idx) => (
+                  <div
+                    key={s.label}
+                    className="rounded-xl sm:rounded-2xl p-3.5 sm:p-4 bg-white border border-slate-200/70 shadow-2xs hover:border-emerald-200 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="text-xl sm:text-2xl font-bold text-slate-900 tabular-nums">
+                        {s.val}
+                      </div>
+                      <span className="text-[10px] sm:text-xs font-semibold px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700">
+                        {s.change}
+                      </span>
                     </div>
+                    <div className="text-xs text-slate-500 mt-1 font-medium">{s.label}</div>
+                  </div>
+                ))}
+              </div>
 
-                    {/* Mock content */}
-                    <div className="p-6" style={{ background: "#f7f7f7" }}>
-                        {/* Stat row */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                            {[
-                                { val: "12", label: "Scheduled" },
-                                { val: "48", label: "Published" },
-                                { val: "4", label: "Accounts" },
-                                { val: "3", label: "AI Rules" },
-                            ].map((s) => (
-                                <div key={s.label} className="rounded-xl p-4 bg-white" style={{ border: "1px solid rgba(0,0,0,0.06)" }}>
-                                    <div className="text-2xl font-bold text-gray-900 tabular-nums">{s.val}</div>
-                                    <div className="text-xs text-gray-400 mt-1">{s.label}</div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Activity list */}
-                        <div className="rounded-xl p-4 space-y-3 bg-white" style={{ border: "1px solid rgba(0,0,0,0.06)" }}>
-                            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Recent Activity</div>
-                            {[
-                                { text: "Post published to LinkedIn & Twitter", time: "2m ago" },
-                                { text: "AI replied to 3 comments", time: "15m ago" },
-                                { text: "New post scheduled for tomorrow 9am", time: "1h ago" },
-                            ].map((item) => (
-                                <div key={item.text} className="flex items-center gap-3">
-                                    <DotIcon className="size-5 text-gray-300" />
-                                    <span className="text-sm text-gray-600 flex-1">{item.text}</span>
-                                    <span className="text-xs text-gray-300 shrink-0">{item.time}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+              {/* Feed preview */}
+              <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 bg-white border border-slate-200/70 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <TrendingUpIcon className="size-4 text-emerald-600" />
+                    <span className="text-xs font-semibold text-slate-800 uppercase tracking-wider">
+                      Live Queue &amp; Automation Feed
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400">Real-time sync</span>
                 </div>
+
+                {[
+                  {
+                    channel: "LinkedIn & X",
+                    text: "Productivity framework: 3 AI rules that doubled our organic reach in 30 days.",
+                    status: "Published",
+                    time: "Just now",
+                  },
+                  {
+                    channel: "Instagram & Facebook",
+                    text: "Behind the scenes: How our automated weekly calendar is planned and queued.",
+                    status: "Scheduled",
+                    time: "Today, 4:30 PM",
+                  },
+                  {
+                    channel: "AI Assistant",
+                    text: "Auto-generated replies to 8 top audience inquiries with sentiment analysis.",
+                    status: "Automated",
+                    time: "12m ago",
+                  },
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 sm:p-3 rounded-xl bg-slate-50/70 hover:bg-emerald-50/40 border border-slate-100 transition-colors"
+                  >
+                    <div className="flex items-start sm:items-center gap-3">
+                      <div className="size-2 rounded-full bg-emerald-500 mt-1.5 sm:mt-0 shrink-0" />
+                      <div>
+                        <span className="text-xs font-semibold text-emerald-800 mr-2">
+                          [{item.channel}]
+                        </span>
+                        <span className="text-xs sm:text-sm text-slate-700">{item.text}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">
+                        {item.status}
+                      </span>
+                      <span className="text-xs text-slate-400">{item.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-        </section>
-    );
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

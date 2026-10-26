@@ -16,7 +16,10 @@ const postSchema = new Schema(
       required: true,
       trim: true,
     },
-
+    isAiGen: {
+      type: Boolean,
+      require: true
+    },
     mediaItems: [
       {
         url: {
